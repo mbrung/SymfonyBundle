@@ -10,11 +10,19 @@ class DefaultController extends Controller
     public function indexAction(Request $request)
     {
         $ctx = $this->get('prismic.context');
+        $stopwatch = $this->get("debug.stopwatch");
+        if ($stopwatch)
+        {
+             $stopwatch->start('PrismicDefautController:get');
+        }
         $docs = $ctx->getApi()->forms()->everything->ref($ctx->getRef())
             ->pageSize(10)
             ->page($request->query->get('page', 1))
             ->submit();
-
+        if ($stopwatch)
+        {
+             $stopwatch->stop('PrismicDefautController:get');
+        }
         return $this->render('PrismicBundle:Default:index.html.twig', array(
             'ctx' => $ctx,
             'docs' => $docs
@@ -24,7 +32,17 @@ class DefaultController extends Controller
     public function detailAction($id, $slug)
     {
         $ctx = $this->get('prismic.context');
+        
+        $stopwatch = $this->get("debug.stopwatch");
+        if ($stopwatch)
+        {
+             $stopwatch->start('PrismicDefautController:getDocument');
+        }
         $doc = $ctx->getDocument($id);
+        if ($stopwatch)
+        {
+             $stopwatch->stop('PrismicDefautController:getDocument');
+        }
 
         if ($doc) {
             if ($doc->getSlug() == $slug) {
